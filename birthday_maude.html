@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Happy Birthday Maude!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 50%, #2d5016 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      touch-action: manipulation;
+    }
+    
+    .sky-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(135, 206, 235, 0.3) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    
+    .container {
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      width: 100%;
+    }
+    
+    .birthday-message {
+      font-size: clamp(32px, 8vw, 48px);
+      font-weight: bold;
+      color: #FFD700;
+      text-shadow: 2px 2px 0 #FF6B6B, 4px 4px 0 #4ECDC4;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+      animation: bounce 0.6s ease-in-out infinite;
+      line-height: 1.2;
+    }
+    
+    .name {
+      font-size: clamp(48px, 15vw, 72px);
+      font-weight: bold;
+      color: #FF1493;
+      text-shadow: 3px 3px 0 #00CED1, 6px 6px 0 #FFD700;
+      margin: 15px 0;
+      animation: pulse 1.5s ease-in-out infinite;
+      line-height: 1.1;
+    }
+    
+    .subtitle {
+      font-size: clamp(14px, 4vw, 20px);
+      color: #00FF00;
+      text-shadow: 2px 2px 0 #000;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+    }
+    
+    .cake {
+      font-size: clamp(60px, 20vw, 80px);
+      margin: 15px 0;
+      animation: bounce 0.6s ease-in-out infinite;
+      filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.5));
+      line-height: 1;
+    }
+    
+    .button {
+      padding: 16px 24px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      background-color: #4CAF50;
+      color: white;
+      border: 3px solid #2d5016;
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+      font-family: 'Courier New', monospace;
+      margin: 8px;
+      min-height: 48px;
+      min-width: 120px;
+      display: inline-block;
+      -webkit-tap-highlight-color: transparent;
+      active: scale(0.95);
+    }
+    
+    .button:active {
+      transform: scale(0.95);
+      background-color: #45a049;
+    }
+    
+    .button:hover {
+      background-color: #45a049;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes blockFall {
+      0% {
+        transform: translateY(-50px) rotateZ(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(200px) rotateZ(360deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotateZ(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-150px) rotateZ(360deg);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes walkRight {
+      0% { transform: translateX(-60px); }
+      100% { transform: translateX(calc(100vw + 60px)); }
+    }
+    
+    @keyframes walkLeft {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-60px); }
+    }
+    
+    .particle {
+      position: fixed;
+      pointer-events: none;
+    }
+    
+    .block {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #000;
+      animation: blockFall 2s ease-in forwards;
+    }
+    
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .character {
+      position: fixed;
+      font-size: clamp(40px, 12vw, 60px);
+      pointer-events: none;
+      z-index: 5;
+      filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+    }
+    
+    .steve {
+      animation: walkRight 8s linear infinite;
+    }
+    
+    .creeper {
+      animation: walkLeft 10s linear infinite;
+    }
+    
+    .sheep {
+      animation: walkRight 12s linear infinite;
+    }
+    
+    .character-top {
+      top: 15%;
+      z-index: 3;
+    }
+    
+    .character-mid {
+      top: 35%;
+      z-index: 4;
+    }
+    
+    .character-low {
+      bottom: 12%;
+      z-index: 3;
+    }
+    
+    .music-toggle {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      padding: 12px 16px;
+      background: #4CAF50;
+      color: white;
+      border: 3px solid #2d5016;
+      border-radius: 0;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 100;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      min-height: 44px;
+      min-width: 44px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .music-toggle:active {
+      transform: scale(0.95);
+      background: #45a049;
+    }
+    
+    audio {
+      display: none;
+    }
+    
+    .firework {
+      position: fixed;
+      pointer-events: none;
+      font-size: 18px;
+    }
+    
+    @media (max-height: 600px) {
+      .controls {
+        margin-top: 10px;
+      }
+      
+      .birthday-message {
+        margin-bottom: 8px;
+      }
+      
+      .name {
+        margin: 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky-overlay"></div>
+  
+  <audio id="minecraft-music" preload="auto" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+  </audio>
+  
+  <button class="music-toggle" onclick="toggleMusic(event)">🔊 ON</button>
+  
+  <div class="container">
+    <div class="birthday-message">🎮 HAPPY BIRTHDAY 🎮</div>
+    <div class="name">MAUDE</div>
+    <div class="cake">🎂</div>
+    <div class="subtitle">» YOU'VE LEVELED UP! «</div>
+    
+    <div class="controls">
+      <button class="button" ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform='scale(1)'" onclick="celebrate(event)">🎉 CELEBRATE</button>
+      <button class="button" ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform='scale(1)'" onclick="summonCreature(event)">🐾 SUMMON</button>
+    </div>
+  </div>
+
+  <script>
+    const audio = document.getElementById('minecraft-music');
+    let musicPlaying = false;
+    
+    function createCharacters() {
+      const characters = [
+        { emoji: '🧔', class: 'steve character character-top' },
+        { emoji: '💚', class: 'creeper character character-mid' },
+        { emoji: '🐑', class: 'sheep character character-low' }
+      ];
+      
+      characters.forEach(char => {
+        const el = document.createElement('div');
+        el.className = char.class;
+        el.textContent = char.emoji;
+        document.body.appendChild(el);
+      });
+    }
+    
+    function toggleMusic(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const btn = document.querySelector('.music-toggle');
+      
+      if (musicPlaying) {
+        audio.pause();
+        btn.textContent = '🔇 OFF';
+        musicPlaying = false;
+      } else {
+        audio.play().catch(err => {
+          console.log('Play failed:', err);
+          btn.textContent = '🔊 ON';
+        });
+        btn.textContent = '🔊 ON';
+        musicPlaying = true;
+      }
+    }
+    
+    function celebrate(e) {
+      e.preventDefault();
+      const colors = ['#4CAF50', '#FF1493', '#FFD700', '#00CED1', '#FF6B6B', '#4ECDC4', '#8B4513', '#D3D3D3'];
+      
+      // Falling blocks (reduced count for mobile)
+      for (let i = 0; i < 15; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle block';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = '-30px';
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 2000);
+      }
+      
+      // Floating confetti
+      const confetti = ['🎉', '⭐', '💎', '🏆', '✨', '🎊', '🌟', '💫'];
+      for (let i = 0; i < 20; i++) {
+        const emoji = document.createElement('div');
+        emoji.className = 'particle firework';
+        emoji.textContent = confetti[Math.floor(Math.random() * confetti.length)];
+        emoji.style.fontSize = '20px';
+        emoji.style.left = Math.random() * 100 + '%';
+        emoji.style.top = '50%';
+        emoji.style.animation = `floatUp 2s ease-out forwards`;
+        emoji.style.transform = `rotateZ(${Math.random() * 360}deg)`;
+        document.body.appendChild(emoji);
+        
+        setTimeout(() => emoji.remove(), 2000);
+      }
+      
+      summonCreature(e);
+    }
+    
+    function summonCreature(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      const creatures = ['🧔', '💚', '🐑', '🐖', '🐄', '🦗'];
+      const creature = creatures[Math.floor(Math.random() * creatures.length)];
+      
+      const el = document.createElement('div');
+      el.className = 'character character-mid';
+      el.textContent = creature;
+      el.style.left = Math.random() * 100 + '%';
+      el.style.top = Math.random() * 30 + 25 + '%';
+      el.style.animation = `walkRight ${6 + Math.random() * 3}s linear forwards`;
+      document.body.appendChild(el);
+      
+      setTimeout(() => el.remove(), 7000);
+    }
+    
+    // Initialize
+    createCharacters();
+    
+    // Auto-play on user interaction (required for mobile)
+    document.addEventListener('click', function initAudio() {
+      if (!musicPlaying) {
+        audio.play().catch(err => console.log('Autoplay blocked'));
+        musicPlaying = true;
+        document.querySelector('.music-toggle').textContent = '🔊 ON';
+      }
+      document.removeEventListener('click', initAudio);
+    }, { once: true });
+    
+    // Spawn creatures periodically (reduced frequency for mobile)
+    setInterval(() => {
+      if (Math.random() > 0.65) {
+        const creatures = ['🧔', '💚', '🐑', '🐖', '🐄'];
+        const creature = creatures[Math.floor(Math.random() * creatures.length)];
+        
+        const el = document.createElement('div');
+        el.className = 'character character-mid';
+        el.textContent = creature;
+        el.style.left = Math.random() * 100 + '%';
+        el.style.top = Math.random() * 30 + 25 + '%';
+        el.style.animation = `walkRight ${8 + Math.random() * 4}s linear forwards`;
+        document.body.appendChild(el);
+        
+        setTimeout(() => el.remove(), 9000);
+      }
+    }, 4000);
+  </script>
+</body>
+</html>
