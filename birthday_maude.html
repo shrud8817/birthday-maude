@@ -622,8 +622,8 @@
   <div class="ambient-particles" id="ambientParticles"></div>
 
   <!-- MUSIC TOGGLE CONTAINER TOP RIGHT -->
-  <button id="musicToggleBtn" class="audio-toggle muted" onclick="toggleMusic()">
-    <span id="musicIcon">🔇</span> <span id="musicText">MUSIC OFF</span>
+  <button id="musicToggleBtn" class="audio-toggle" onclick="toggleMusic()">
+    <span id="musicIcon">🔊</span> <span id="musicText">MUSIC ON</span>
   </button>
   
   <!-- MAIN BIRTHDAY PAGE -->
@@ -761,7 +761,8 @@
   <script>
     // PROCEDURAL MUSIC GENERATOR FOR C418's "SWEDEN" (Web Audio API)
     let audioCtx = null;
-    let isMusicPlaying = false;
+    let userWantsMusic = true; // Track user's manual preference via toggle button
+    let isMusicPlaying = false; 
     let nextNoteTimeout = null;
 
     // Pitch Definitions for Sweden's iconic progressive structure
@@ -801,6 +802,7 @@
     }
 
     function playTone(freq, type, gainVol, attach, decay, startTime) {
+      if (!audioCtx) return;
       let osc = audioCtx.createOscillator();
       let gainNode = audioCtx.createGain();
       
@@ -845,6 +847,34 @@
       nextNoteTimeout = setTimeout(playSwedenStep, step.dur * 1000);
     }
 
+    function startMusicOnLoad() {
+      initAudio();
+      isMusicPlaying = true;
+      userWantsMusic = true;
+      document.getElementById('musicToggleBtn').classList.remove('muted');
+      document.getElementById('musicIcon').textContent = "🔊";
+      document.getElementById('musicText').textContent = "MUSIC ON";
+      
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+          playSwedenStep();
+        }).catch(() => {
+          window.addEventListener('click', forceUnlockAudio, { once: true });
+          window.addEventListener('touchstart', forceUnlockAudio, { once: true });
+        });
+      } else {
+        playSwedenStep();
+      }
+    }
+
+    function forceUnlockAudio() {
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().then(() => {
+          if (isMusicPlaying && !nextNoteTimeout) playSwedenStep();
+        });
+      }
+    }
+
     function toggleMusic() {
       initAudio();
       const btn = document.getElementById('musicToggleBtn');
@@ -853,6 +883,7 @@
 
       if (!isMusicPlaying) {
         isMusicPlaying = true;
+        userWantsMusic = true;
         btn.classList.remove('muted');
         icon.textContent = "🔊";
         text.textContent = "MUSIC ON";
@@ -862,11 +893,86 @@
         playSwedenStep();
       } else {
         isMusicPlaying = false;
+        userWantsMusic = false;
         btn.classList.add('muted');
         icon.textContent = "🔇";
         text.textContent = "MUSIC OFF";
         clearTimeout(nextNoteTimeout);
+        nextNoteTimeout = null;
       }
+    }
+
+    // INTERNAL DUCKING FUNCTIONS FOR GAMEPLAY STATES
+    function stopMusicForGame() {
+      isMusicPlaying = false;
+      clearTimeout(nextNoteTimeout);
+      nextNoteTimeout = null;
+    }
+
+    function resumeMusicForMainScreen() {
+      // Only recover music if the user hasn't explicitly muted it beforehand
+      if (!userWantsMusic) return;
+      
+      initAudio();
+      if (!isMusicPlaying) {
+        isMusicPlaying = true;
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        playSwedenStep();
+      }
+    }
+
+    // PROCEDURAL REALTIME SOUND EFFECTS 
+    function playMineSfx(type, currentCombo) {
+      if (!audioCtx) return;
+      let now = audioCtx.currentTime;
+      let comboMultiplier = 1 + (currentCombo * 0.04);
+
+      switch(type) {
+        case 'stone':
+          playTone(320 * comboMultiplier, 'triangle', 0.15, 0.01, 0.12, now);
+          break;
+        case 'gold':
+          playTone(580 * comboMultiplier, 'sine', 0.18, 0.01, 0.15, now);
+          playTone(1160 * comboMultiplier, 'sine', 0.05, 0.02, 0.1, now);
+          break;
+        case 'diamond':
+          playTone(880 * comboMultiplier, 'sine', 0.2, 0.005, 0.2, now);
+          playTone(1760 * comboMultiplier, 'sine', 0.08, 0.01, 0.15, now);
+          break;
+        case 'emerald':
+          playTone(680 * comboMultiplier, 'triangle', 0.18, 0.01, 0.18, now);
+          playTone(1360 * comboMultiplier, 'sine', 0.05, 0.02, 0.12, now);
+          break;
+        case 'enemy': 
+          playTone(110, 'sawtooth', 0.25, 0.02, 0.3, now);
+          playTone(85, 'sine', 0.3, 0.01, 0.4, now);
+          break;
+        case 'tnt': 
+          let osc = audioCtx.createOscillator();
+          let gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.exponentialRampToValueAtTime(30, now + 0.4);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.45);
+          playTone(55, 'sine', 0.4, 0.05, 0.6, now);
+          break;
+      }
+    }
+
+    function playGameOverSfx() {
+      if (!audioCtx) return;
+      let now = audioCtx.currentTime;
+      playTone(440, 'triangle', 0.2, 0.02, 0.15, now);
+      playTone(392, 'triangle', 0.2, 0.02, 0.15, now + 0.12);
+      playTone(349.23, 'triangle', 0.2, 0.02, 0.15, now + 0.24);
+      playTone(261.63, 'sawtooth', 0.25, 0.05, 0.5, now + 0.36);
     }
 
     // AMBIENT EFFECTS
@@ -915,6 +1021,7 @@
     
     // CELEBRATE EFFECT
     function celebrate() {
+      forceUnlockAudio(); 
       const emojis = ['🎉', '⭐', '💎', '🏆', '✨', '🎊', '🌟', '💫', '🎈', '🎁', '🔥', '⚡'];
       
       for (let i = 0; i < 40; i++) {
@@ -936,6 +1043,7 @@
     
     // SUMMON CREATURES
     function summonCreature() {
+      forceUnlockAudio();
       const creatures = ['🧔', '💚', '🐑', '🐖', '🐄', '🦗', '🐓', '🦝'];
       
       for (let i = 0; i < 8; i++) {
@@ -990,6 +1098,7 @@
     }
     
     function startGameMode() {
+      forceUnlockAudio();
       document.getElementById('mainContainer').style.display = 'none';
       document.getElementById('modeSelector').classList.add('active');
     }
@@ -1025,6 +1134,9 @@
       }
       
       document.getElementById('gameTitle').textContent = `⛏️ ${mode.toUpperCase()} MODE ⛏️`;
+      
+      // Stop ambient track before launching the game fields
+      stopMusicForGame();
       startGame();
     }
     
@@ -1057,6 +1169,9 @@
       
       document.getElementById('gameContainer').classList.remove('active');
       document.getElementById('mainContainer').style.display = 'block';
+      
+      // Safety release: Resume Sweden progression loop on landing page
+      resumeMusicForMainScreen();
       
       if (score > 0) celebrateFinalScore();
     }
@@ -1121,6 +1236,8 @@
         comboPoints = 0;
       }
       
+      playMineSfx(blockType, combo);
+
       if (blockType === 'enemy') {
         score = Math.max(0, score - 50);
         combo = 0;
@@ -1241,6 +1358,8 @@
           clearInterval(gameTimer);
           clearInterval(spawnTimer);
           
+          playGameOverSfx();
+
           const gameArea = document.getElementById('gameArea');
           gameArea.innerHTML = `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #FFD700; text-shadow: 2px 2px 0 #000; font-size: 32px; width: 90%;">
             <div style="margin-bottom: 20px; font-size: 40px;">🎮 GAME OVER! 🎮</div>
@@ -1273,9 +1392,14 @@
       }
     }
     
-    // Initialize
+    // Initialize loops and window contexts
     createAmbientParticles();
     setInterval(spawnRandomCharacter, 5000);
+    
+    // Auto initialization sequence on DOM completion
+    window.addEventListener('DOMContentLoaded', () => {
+      startMusicOnLoad();
+    });
   </script>
 </body>
 </html>
