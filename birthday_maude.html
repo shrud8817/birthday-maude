@@ -50,6 +50,36 @@
       pointer-events: none;
       z-index: 1;
     }
+
+    /* MUSIC TOGGLE BUTTON */
+    .audio-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 3000;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+      border: 3px solid #2d5016;
+      padding: 10px 15px;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .audio-toggle:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .audio-toggle.muted {
+      background: linear-gradient(135deg, #FF6B6B 0%, #FF1493 100%);
+      border-color: #CC0000;
+    }
     
     .particle-falling {
       position: absolute;
@@ -590,6 +620,11 @@
 <body>
   <div class="sky-overlay"></div>
   <div class="ambient-particles" id="ambientParticles"></div>
+
+  <!-- MUSIC TOGGLE CONTAINER TOP RIGHT -->
+  <button id="musicToggleBtn" class="audio-toggle muted" onclick="toggleMusic()">
+    <span id="musicIcon">🔇</span> <span id="musicText">MUSIC OFF</span>
+  </button>
   
   <!-- MAIN BIRTHDAY PAGE -->
   <div class="main-container" id="mainContainer">
@@ -724,6 +759,116 @@
   </div>
 
   <script>
+    // PROCEDURAL MUSIC GENERATOR FOR C418's "SWEDEN" (Web Audio API)
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let nextNoteTimeout = null;
+
+    // Pitch Definitions for Sweden's iconic progressive structure
+    const noteFreqs = {
+      "D3": 146.83, "G3": 196.00, "A3": 220.00, "B3": 246.94, "D4": 293.66,
+      "E4": 329.63, "F#4": 369.99, "G4": 392.00, "A4": 440.00, "B4": 493.88, 
+      "D5": 587.33, "E5": 659.25, "F#5": 739.99, "G5": 783.99, "A5": 880.00
+    };
+
+    // Note array replicating C418 - Sweden's calm cadence
+    const swedenMelody = [
+      { melody: "B4", harmony: ["G3", "D4"], dur: 1.4 },
+      { melody: "D5", harmony: [], dur: 0.7 },
+      { melody: "E5", harmony: ["C4", "G4"], dur: 1.4 },
+      { melody: "G5", harmony: [], dur: 0.7 },
+      { melody: "F#5", harmony: ["D3", "A3", "D4"], dur: 2.1 },
+      
+      { melody: "D5", harmony: ["B3", "D4"], dur: 1.4 },
+      { melody: "B4", harmony: [], dur: 0.7 },
+      { melody: "G4", harmony: ["C4", "E4"], dur: 2.1 },
+      
+      { melody: "A4", harmony: ["D3", "A3"], dur: 1.4 },
+      { melody: "B4", harmony: [], dur: 0.7 },
+      { melody: "D5", harmony: ["G3", "D4"], dur: 1.4 },
+      { melody: "G4", harmony: [], dur: 0.7 },
+      { melody: "E4", harmony: ["C4", "G4"], dur: 2.1 },
+      
+      { melody: "D4", harmony: ["D3", "A3"], dur: 2.8 }
+    ];
+
+    let currentNoteIndex = 0;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTone(freq, type, gainVol, attach, decay, startTime) {
+      let osc = audioCtx.createOscillator();
+      let gainNode = audioCtx.createGain();
+      
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, startTime);
+      
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(gainVol, startTime + attach); 
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + decay);
+
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      osc.start(startTime);
+      osc.stop(startTime + decay);
+    }
+
+    function playSwedenStep() {
+      if (!isMusicPlaying || !audioCtx) return;
+
+      let step = swedenMelody[currentNoteIndex];
+      let now = audioCtx.currentTime;
+
+      // Primary melody voice (Soft, nostalgic triangle wave)
+      if (step.melody && noteFreqs[step.melody]) {
+        playTone(noteFreqs[step.melody], 'triangle', 0.08, 0.2, step.dur * 1.5, now);
+        
+        // Subtle ambient delay/echo emulation node
+        playTone(noteFreqs[step.melody], 'sine', 0.02, 0.4, step.dur, now + 0.35);
+      }
+
+      // Warm background chords (Sine wave block pads)
+      if (step.harmony) {
+        step.harmony.forEach(hNote => {
+          if (noteFreqs[hNote]) {
+            playTone(noteFreqs[hNote], 'sine', 0.04, 0.4, step.dur * 1.8, now);
+          }
+        });
+      }
+
+      currentNoteIndex = (currentNoteIndex + 1) % swedenMelody.length;
+      nextNoteTimeout = setTimeout(playSwedenStep, step.dur * 1000);
+    }
+
+    function toggleMusic() {
+      initAudio();
+      const btn = document.getElementById('musicToggleBtn');
+      const icon = document.getElementById('musicIcon');
+      const text = document.getElementById('musicText');
+
+      if (!isMusicPlaying) {
+        isMusicPlaying = true;
+        btn.classList.remove('muted');
+        icon.textContent = "🔊";
+        text.textContent = "MUSIC ON";
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        playSwedenStep();
+      } else {
+        isMusicPlaying = false;
+        btn.classList.add('muted');
+        icon.textContent = "🔇";
+        text.textContent = "MUSIC OFF";
+        clearTimeout(nextNoteTimeout);
+      }
+    }
+
     // AMBIENT EFFECTS
     function createAmbientParticles() {
       setInterval(() => {
