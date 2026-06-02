@@ -25,8 +25,9 @@
       font-family: 'Courier New', monospace;
       background: linear-gradient(180deg, #87CEEB 0%, #87CEEB 50%, #2d5016 100%);
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       position: relative;
       touch-action: manipulation;
     }
@@ -51,12 +52,17 @@
       z-index: 1;
     }
 
-    /* MUSIC TOGGLE BUTTON */
-    .audio-toggle {
-      position: fixed;
-      top: 15px;
-      right: 15px;
+    /* FIXED: TOP UTILITY BAR TO PREVENT OVERLAPPING */
+    .top-utility-bar {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: calc(12px + env(safe-area-inset-top)) 15px 10px 15px;
+      position: relative;
       z-index: 3000;
+    }
+
+    .audio-toggle {
       background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
       color: white;
       border: 3px solid #2d5016;
@@ -101,21 +107,13 @@
     }
     
     @keyframes walkRight {
-      0% {
-        transform: translateX(-100px);
-      }
-      100% {
-        transform: translateX(calc(100vw + 100px));
-      }
+      0% { transform: translateX(-100px); }
+      100% { transform: translateX(calc(100vw + 100px)); }
     }
     
     @keyframes walkLeft {
-      0% {
-        transform: translateX(100vw);
-      }
-      100% {
-        transform: translateX(-100px);
-      }
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100px); }
     }
     
     .character-ambient {
@@ -126,30 +124,36 @@
       filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.5));
     }
     
+    /* ADJUSTED CONTEXT POSITIONING FOR APP LAYER */
     .main-container {
       text-align: center;
       position: relative;
       z-index: 10;
-      padding: 20px;
+      padding: 10px 20px 20px 20px;
       width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
     
     .birthday-message {
-      font-size: clamp(32px, 8vw, 48px);
+      font-size: clamp(28px, 7.5vw, 48px);
       font-weight: bold;
       color: #FFD700;
       text-shadow: 3px 3px 0 #FF6B6B, 6px 6px 0 #4ECDC4;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       animation: bounce 0.6s ease-in-out infinite;
       filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
     }
     
     .name {
-      font-size: clamp(48px, 15vw, 72px);
+      font-size: clamp(44px, 14vw, 72px);
       font-weight: bold;
       color: #FF1493;
       text-shadow: 3px 3px 0 #00CED1, 6px 6px 0 #FFD700;
-      margin: 15px 0;
+      margin: 10px 0;
       animation: pulse 1.5s ease-in-out infinite;
       filter: drop-shadow(0 0 15px rgba(255, 20, 147, 0.6));
     }
@@ -158,13 +162,13 @@
       font-size: clamp(14px, 4vw, 20px);
       color: #00FF00;
       text-shadow: 2px 2px 0 #000;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       animation: glow 2s ease-in-out infinite;
     }
     
     .cake {
-      font-size: clamp(60px, 20vw, 80px);
-      margin: 15px 0;
+      font-size: clamp(55px, 18vw, 80px);
+      margin: 10px 0;
       animation: bounce 0.6s ease-in-out infinite;
       filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.4));
     }
@@ -179,7 +183,7 @@
       font-weight: bold;
       transition: all 0.2s;
       font-family: 'Courier New', monospace;
-      margin: 8px;
+      margin: 6px;
       min-height: 48px;
       display: inline-block;
       -webkit-tap-highlight-color: transparent;
@@ -221,6 +225,7 @@
       box-shadow: 0 6px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 107, 107, 0.7);
     }
     
+    /* FIXED: INSTRUCTIONS OVERLAY SCROLL FIX FOR ANDROID/MOBILE */
     .instructions-overlay {
       display: none;
       position: fixed;
@@ -229,31 +234,30 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.9);
-      z-index: 2000;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: auto;
-      padding: 20px;
+      z-index: 4000;
+      overflow-y: auto; 
+      -webkit-overflow-scrolling: touch; 
+      padding: 30px 15px;
     }
     
     .instructions-overlay.active {
-      display: flex;
+      display: block; 
     }
     
     .instructions-box {
       background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
       border: 4px solid #FFD700;
-      padding: 30px;
+      padding: 25px 20px;
       max-width: 600px;
       color: white;
       text-align: left;
       box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+      margin: 0 auto; 
     }
     
     .instructions-box h2 {
       text-align: center;
-      font-size: 32px;
+      font-size: 28px;
       margin-bottom: 20px;
       color: #FFD700;
       text-shadow: 2px 2px 0 #000;
@@ -290,8 +294,9 @@
     }
     
     .close-instructions {
-      margin-top: 20px;
+      margin-top: 25px;
       text-align: center;
+      width: 100%;
     }
     
     .mode-selector {
@@ -331,8 +336,8 @@
     .mode-box {
       background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
       border: 4px solid #FFD700;
-      padding: 30px;
-      margin: 15px;
+      padding: 25px;
+      margin: 10px;
       color: white;
       min-width: 220px;
       cursor: pointer;
@@ -462,42 +467,12 @@
       transform: scale(0.9);
     }
     
-    .block-stone {
-      background: linear-gradient(135deg, #9B9B9B 0%, #7B7B7B 100%);
-      border-color: #505050;
-    }
-    
-    .block-gold {
-      background: linear-gradient(135deg, #FFE55C 0%, #FFD700 100%);
-      border-color: #CC9900;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(255, 215, 0, 0.6);
-    }
-    
-    .block-diamond {
-      background: linear-gradient(135deg, #00DED1 0%, #00CED1 100%);
-      border-color: #0099AA;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(0, 206, 209, 0.6);
-    }
-    
-    .block-emerald {
-      background: linear-gradient(135deg, #1FFF00 0%, #00FF00 100%);
-      border-color: #00CC00;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(0, 255, 0, 0.6);
-    }
-    
-    .block-tnt {
-      background: linear-gradient(135deg, #FF2020 0%, #FF0000 100%);
-      border-color: #990000;
-      animation: shake 0.2s infinite;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(255, 0, 0, 0.6);
-    }
-    
-    .block-enemy {
-      background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
-      border-color: #005500;
-      animation: pulse 0.5s infinite;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(34, 139, 34, 0.6);
-    }
+    .block-stone { background: linear-gradient(135deg, #9B9B9B 0%, #7B7B7B 100%); border-color: #505050; }
+    .block-gold { background: linear-gradient(135deg, #FFE55C 0%, #FFD700 100%); border-color: #CC9900; box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(255, 215, 0, 0.6); }
+    .block-diamond { background: linear-gradient(135deg, #00DED1 0%, #00CED1 100%); border-color: #0099AA; box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(0, 206, 209, 0.6); }
+    .block-emerald { background: linear-gradient(135deg, #1FFF00 0%, #00FF00 100%); border-color: #00CC00; box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(0, 255, 0, 0.6); }
+    .block-tnt { background: linear-gradient(135deg, #FF2020 0%, #FF0000 100%); border-color: #990000; animation: shake 0.2s infinite; box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(255, 0, 0, 0.6); }
+    .block-enemy { background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%); border-color: #005500; animation: pulse 0.5s infinite; box-shadow: 0 4px 0 rgba(0,0,0,0.3), 0 0 10px rgba(34, 139, 34, 0.6); }
     
     .points-popup {
       position: absolute;
@@ -530,7 +505,7 @@
       border: 4px solid #FF6B6B;
       padding: 30px;
       text-align: center;
-      z-index: 2000;
+      z-index: 5000;
       animation: bounce 0.6s ease-out;
       box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
     }
@@ -542,89 +517,30 @@
       text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.5);
     }
     
-    .achievement-popup p {
-      font-size: 16px;
-      color: #333;
-    }
+    .achievement-popup p { font-size: 16px; color: #333; }
+    .screen-shake { animation: screenShake 0.2s; }
+    .celebrate-confetti { position: fixed; pointer-events: none; font-size: 30px; animation: celebrateFloat 2s ease-out forwards; }
+    .summon-creature { position: fixed; font-size: 70px; pointer-events: none; filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.6)); z-index: 100; }
     
-    .screen-shake {
-      animation: screenShake 0.2s;
-    }
-    
-    .celebrate-confetti {
-      position: fixed;
-      pointer-events: none;
-      font-size: 30px;
-      animation: celebrateFloat 2s ease-out forwards;
-    }
-    
-    .summon-creature {
-      position: fixed;
-      font-size: 70px;
-      pointer-events: none;
-      filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.6));
-      z-index: 100;
-    }
-    
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-    
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    
-    @keyframes glow {
-      0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 10px rgba(0, 255, 0, 0.5); }
-      50% { text-shadow: 2px 2px 0 #000, 0 0 20px rgba(0, 255, 0, 0.8); }
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(2deg); }
-      75% { transform: rotate(-2deg); }
-    }
-    
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-50px) scale(0.5);
-        opacity: 0;
-      }
-    }
-    
-    @keyframes celebrateFloat {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100px) rotateZ(360deg) scale(0);
-        opacity: 0;
-      }
-    }
-    
-    @keyframes screenShake {
-      0%, 100% { transform: translate(0, 0); }
-      25% { transform: translate(-5px, 0); }
-      50% { transform: translate(5px, 0); }
-      75% { transform: translate(-5px, 0); }
-    }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes glow { 0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 10px rgba(0, 255, 0, 0.5); } 50% { text-shadow: 2px 2px 0 #000, 0 0 20px rgba(0, 255, 0, 0.8); } }
+    @keyframes shake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } }
+    @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-50px) scale(0.5); opacity: 0; } }
+    @keyframes celebrateFloat { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) rotateZ(360deg) scale(0); opacity: 0; } }
+    @keyframes screenShake { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-5px, 0); } 50% { transform: translate(5px, 0); } 75% { transform: translate(-5px, 0); } }
   </style>
 </head>
 <body>
   <div class="sky-overlay"></div>
   <div class="ambient-particles" id="ambientParticles"></div>
 
-  <!-- MUSIC TOGGLE CONTAINER TOP RIGHT -->
-  <button id="musicToggleBtn" class="audio-toggle" onclick="toggleMusic()">
-    <span id="musicIcon">🔊</span> <span id="musicText">MUSIC ON</span>
-  </button>
+  <!-- FIXED BAR LAYOUT FOR MUSIC HUD -->
+  <div class="top-utility-bar">
+    <button id="musicToggleBtn" class="audio-toggle" onclick="toggleMusic()">
+      <span id="musicIcon">🔊</span> <span id="musicText">MUSIC ON</span>
+    </button>
+  </div>
   
   <!-- MAIN BIRTHDAY PAGE -->
   <div class="main-container" id="mainContainer">
@@ -633,7 +549,7 @@
     <div class="cake">🎂</div>
     <div class="subtitle">» YOU'VE LEVELED UP! «</div>
     
-    <div style="margin-top: 30px;">
+    <div style="margin-top: 20px; width: 100%;">
       <button class="button game-btn" onclick="startGameMode()">⛏️ PLAY MINING GAME ⛏️</button>
       <br>
       <button class="button action-btn" onclick="celebrate()">🎉 CELEBRATE</button>
@@ -642,7 +558,7 @@
     </div>
   </div>
 
-  <!-- INSTRUCTIONS OVERLAY -->
+  <!-- INSTRUCTIONS OVERLAY (SCROLL FIX COMPLETED) -->
   <div class="instructions-overlay" id="instructionsOverlay">
     <div class="instructions-box">
       <h2>⛏️ HOW TO PLAY ⛏️</h2>
@@ -704,27 +620,20 @@
   <div class="mode-selector" id="modeSelector">
     <div class="mode-selector-content">
       <h2 style="color: #FFD700; text-shadow: 2px 2px 0 #000; margin-bottom: 30px; font-size: 36px;">SELECT DIFFICULTY</h2>
-      
       <div class="mode-boxes">
         <div class="mode-box" onclick="selectMode('normal')">
           <h3>⭐ NORMAL</h3>
           <p>30 seconds</p>
-          <p style="margin-top: 10px; font-size: 12px;">Good for beginners</p>
         </div>
-        
         <div class="mode-box" onclick="selectMode('hard')">
           <h3>🔥 HARD</h3>
           <p>45 seconds</p>
-          <p style="margin-top: 10px; font-size: 12px;">More Creepers & TNT!</p>
         </div>
-        
         <div class="mode-box" onclick="selectMode('insane')">
           <h3>💀 INSANE</h3>
           <p>60 seconds</p>
-          <p style="margin-top: 10px; font-size: 12px;">For legends only!</p>
         </div>
       </div>
-      
       <div class="back-to-main">
         <button class="button back-btn-main" onclick="backToMain()">« BACK TO BIRTHDAY</button>
       </div>
@@ -738,17 +647,9 @@
     </div>
     
     <div class="game-stats">
-      <div class="stat-box">
-        Score<br>
-        <span class="stat-value" id="scoreDisplay">0</span>
-      </div>
-      <div class="stat-box">
-        Time<br>
-        <span class="stat-value" id="timerDisplay">30</span>s
-      </div>
-      <div class="stat-box combo-indicator" id="comboBox" style="display: none;">
-        COMBO x<span id="comboDisplay">0</span>
-      </div>
+      <div class="stat-box">Score<br><span class="stat-value" id="scoreDisplay">0</span></div>
+      <div class="stat-box">Time<br><span class="stat-value" id="timerDisplay">30</span>s</div>
+      <div class="stat-box combo-indicator" id="comboBox" style="display: none;">COMBO x<span id="comboDisplay">0</span></div>
     </div>
     
     <div class="game-area" id="gameArea"></div>
@@ -759,37 +660,32 @@
   </div>
 
   <script>
-    // PROCEDURAL MUSIC GENERATOR FOR C418's "SWEDEN" (Web Audio API)
+    // PROCEDURAL MUSIC GENERATOR FOR C418's "SWEDEN"
     let audioCtx = null;
-    let userWantsMusic = true; // Track user's manual preference via toggle button
+    let userWantsMusic = true; 
     let isMusicPlaying = false; 
     let nextNoteTimeout = null;
 
-    // Pitch Definitions for Sweden's iconic progressive structure
     const noteFreqs = {
       "D3": 146.83, "G3": 196.00, "A3": 220.00, "B3": 246.94, "D4": 293.66,
       "E4": 329.63, "F#4": 369.99, "G4": 392.00, "A4": 440.00, "B4": 493.88, 
       "D5": 587.33, "E5": 659.25, "F#5": 739.99, "G5": 783.99, "A5": 880.00
     };
 
-    // Note array replicating C418 - Sweden's calm cadence
     const swedenMelody = [
       { melody: "B4", harmony: ["G3", "D4"], dur: 1.4 },
       { melody: "D5", harmony: [], dur: 0.7 },
       { melody: "E5", harmony: ["C4", "G4"], dur: 1.4 },
       { melody: "G5", harmony: [], dur: 0.7 },
       { melody: "F#5", harmony: ["D3", "A3", "D4"], dur: 2.1 },
-      
       { melody: "D5", harmony: ["B3", "D4"], dur: 1.4 },
       { melody: "B4", harmony: [], dur: 0.7 },
       { melody: "G4", harmony: ["C4", "E4"], dur: 2.1 },
-      
       { melody: "A4", harmony: ["D3", "A3"], dur: 1.4 },
       { melody: "B4", harmony: [], dur: 0.7 },
       { melody: "D5", harmony: ["G3", "D4"], dur: 1.4 },
       { melody: "G4", harmony: [], dur: 0.7 },
       { melody: "E4", harmony: ["C4", "G4"], dur: 2.1 },
-      
       { melody: "D4", harmony: ["D3", "A3"], dur: 2.8 }
     ];
 
@@ -808,14 +704,12 @@
       
       osc.type = type;
       osc.frequency.setValueAtTime(freq, startTime);
-      
       gainNode.gain.setValueAtTime(0, startTime);
       gainNode.gain.linearRampToValueAtTime(gainVol, startTime + attach); 
       gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + decay);
 
       osc.connect(gainNode);
       gainNode.connect(audioCtx.destination);
-      
       osc.start(startTime);
       osc.stop(startTime + decay);
     }
@@ -826,15 +720,11 @@
       let step = swedenMelody[currentNoteIndex];
       let now = audioCtx.currentTime;
 
-      // Primary melody voice (Soft, nostalgic triangle wave)
       if (step.melody && noteFreqs[step.melody]) {
         playTone(noteFreqs[step.melody], 'triangle', 0.08, 0.2, step.dur * 1.5, now);
-        
-        // Subtle ambient delay/echo emulation node
         playTone(noteFreqs[step.melody], 'sine', 0.02, 0.4, step.dur, now + 0.35);
       }
 
-      // Warm background chords (Sine wave block pads)
       if (step.harmony) {
         step.harmony.forEach(hNote => {
           if (noteFreqs[hNote]) {
@@ -852,8 +742,6 @@
       isMusicPlaying = true;
       userWantsMusic = true;
       document.getElementById('musicToggleBtn').classList.remove('muted');
-      document.getElementById('musicIcon').textContent = "🔊";
-      document.getElementById('musicText').textContent = "MUSIC ON";
       
       if (audioCtx.state === 'suspended') {
         audioCtx.resume().then(() => {
@@ -887,9 +775,7 @@
         btn.classList.remove('muted');
         icon.textContent = "🔊";
         text.textContent = "MUSIC ON";
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         playSwedenStep();
       } else {
         isMusicPlaying = false;
@@ -902,7 +788,6 @@
       }
     }
 
-    // INTERNAL DUCKING FUNCTIONS FOR GAMEPLAY STATES
     function stopMusicForGame() {
       isMusicPlaying = false;
       clearTimeout(nextNoteTimeout);
@@ -910,29 +795,23 @@
     }
 
     function resumeMusicForMainScreen() {
-      // Only recover music if the user hasn't explicitly muted it beforehand
       if (!userWantsMusic) return;
-      
       initAudio();
       if (!isMusicPlaying) {
         isMusicPlaying = true;
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         playSwedenStep();
       }
     }
 
-    // PROCEDURAL REALTIME SOUND EFFECTS 
+    // GAME INTERACTION SOUNDS
     function playMineSfx(type, currentCombo) {
       if (!audioCtx) return;
       let now = audioCtx.currentTime;
       let comboMultiplier = 1 + (currentCombo * 0.04);
 
       switch(type) {
-        case 'stone':
-          playTone(320 * comboMultiplier, 'triangle', 0.15, 0.01, 0.12, now);
-          break;
+        case 'stone': playTone(320 * comboMultiplier, 'triangle', 0.15, 0.01, 0.12, now); break;
         case 'gold':
           playTone(580 * comboMultiplier, 'sine', 0.18, 0.01, 0.15, now);
           playTone(1160 * comboMultiplier, 'sine', 0.05, 0.02, 0.1, now);
@@ -959,8 +838,7 @@
           gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
-          osc.start(now);
-          osc.stop(now + 0.45);
+          osc.start(now); osc.stop(now + 0.45);
           playTone(55, 'sine', 0.4, 0.05, 0.6, now);
           break;
       }
@@ -975,7 +853,17 @@
       playTone(261.63, 'sawtooth', 0.25, 0.05, 0.5, now + 0.36);
     }
 
-    // AMBIENT EFFECTS
+    // INTERFACE CONTROLS & ANIMATIONS
+    function showInstructions() {
+      const overlay = document.getElementById('instructionsOverlay');
+      overlay.classList.add('active');
+      overlay.scrollTop = 0; // Force scroll initialization to top position
+    }
+    
+    function hideInstructions() {
+      document.getElementById('instructionsOverlay').classList.remove('active');
+    }
+
     function createAmbientParticles() {
       setInterval(() => {
         if (document.getElementById('mainContainer').style.display !== 'none') {
@@ -986,7 +874,6 @@
           particle.style.left = Math.random() * 100 + '%';
           particle.style.top = '-100px';
           document.getElementById('ambientParticles').appendChild(particle);
-          
           setTimeout(() => particle.remove(), 6000);
         }
       }, 800);
@@ -999,7 +886,6 @@
           document.getElementById('modeSelector').classList.contains('active')) {
         return;
       }
-      
       const creatures = ['🧔', '💚', '🐑', '🐖', '🐄', '🦗'];
       const creature = creatures[Math.floor(Math.random() * creatures.length)];
       const char = document.createElement('div');
@@ -1014,16 +900,13 @@
         char.style.animation = 'walkLeft 8s linear forwards';
         char.style.right = '-100px';
       }
-      
       document.body.appendChild(char);
       setTimeout(() => char.remove(), 8000);
     }
     
-    // CELEBRATE EFFECT
     function celebrate() {
       forceUnlockAudio(); 
       const emojis = ['🎉', '⭐', '💎', '🏆', '✨', '🎊', '🌟', '💫', '🎈', '🎁', '🔥', '⚡'];
-      
       for (let i = 0; i < 40; i++) {
         setTimeout(() => {
           const confetti = document.createElement('div');
@@ -1031,21 +914,16 @@
           confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
           confetti.style.left = Math.random() * 100 + '%';
           confetti.style.top = '50%';
-          confetti.style.color = ['#FFD700', '#FF6B6B', '#00FF00', '#00CED1', '#FF1493'][Math.floor(Math.random() * 5)];
           confetti.style.fontSize = (20 + Math.random() * 30) + 'px';
-          confetti.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
           document.body.appendChild(confetti);
-          
           setTimeout(() => confetti.remove(), 2000);
         }, i * 40);
       }
     }
     
-    // SUMMON CREATURES
     function summonCreature() {
       forceUnlockAudio();
       const creatures = ['🧔', '💚', '🐑', '🐖', '🐄', '🦗', '🐓', '🦝'];
-      
       for (let i = 0; i < 8; i++) {
         setTimeout(() => {
           const creature = creatures[Math.floor(Math.random() * creatures.length)];
@@ -1054,31 +932,16 @@
           char.textContent = creature;
           char.style.left = Math.random() * 80 + 10 + '%';
           char.style.top = Math.random() * 60 + 20 + '%';
-          
-          if (Math.random() > 0.5) {
-            char.style.animation = 'walkRight 6s linear forwards';
-          } else {
-            char.style.animation = 'walkLeft 6s linear forwards';
-          }
-          
+          char.style.animation = Math.random() > 0.5 ? 'walkRight 6s linear forwards' : 'walkLeft 6s linear forwards';
           document.body.appendChild(char);
           setTimeout(() => char.remove(), 6000);
         }, i * 200);
       }
     }
     
-    // GAME LOGIC
-    let gameActive = false;
-    let score = 0;
-    let timeLeft = 30;
-    let gameTimer = null;
-    let gameMode = 'normal';
-    let combo = 0;
-    let comboPoints = 0;
-    let maxCombo = 0;
-    let lastClickedType = null;
-    let blockSpawnRate = 800;
-    let spawnTimer = null;
+    // GAME CORE ENGINE
+    let gameActive = false, score = 0, timeLeft = 30, gameTimer = null, gameMode = 'normal';
+    let combo = 0, comboPoints = 0, maxCombo = 0, lastClickedType = null, blockSpawnRate = 800, spawnTimer = null;
     
     const blockTypes = {
       stone: { points: 10, emoji: '⬜', class: 'block-stone', spawn: 35 },
@@ -1089,14 +952,6 @@
       enemy: { points: -50, emoji: '💚', class: 'block-enemy', spawn: 35 }
     };
     
-    function showInstructions() {
-      document.getElementById('instructionsOverlay').classList.add('active');
-    }
-    
-    function hideInstructions() {
-      document.getElementById('instructionsOverlay').classList.remove('active');
-    }
-    
     function startGameMode() {
       forceUnlockAudio();
       document.getElementById('mainContainer').style.display = 'none';
@@ -1105,7 +960,7 @@
     
     function backToMain() {
       document.getElementById('modeSelector').classList.remove('active');
-      document.getElementById('mainContainer').style.display = 'block';
+      document.getElementById('mainContainer').style.display = 'flex';
     }
     
     function selectMode(mode) {
@@ -1113,66 +968,35 @@
       document.getElementById('modeSelector').classList.remove('active');
       
       switch(mode) {
-        case 'normal':
-          timeLeft = 30;
-          blockSpawnRate = 700;
-          blockTypes.enemy.spawn = 35;
-          blockTypes.tnt.spawn = 1;
-          break;
-        case 'hard':
-          timeLeft = 45;
-          blockSpawnRate = 500;
-          blockTypes.enemy.spawn = 45;
-          blockTypes.tnt.spawn = 2;
-          break;
-        case 'insane':
-          timeLeft = 60;
-          blockSpawnRate = 300;
-          blockTypes.enemy.spawn = 55;
-          blockTypes.tnt.spawn = 2;
-          break;
+        case 'normal': timeLeft = 30; blockSpawnRate = 700; blockTypes.enemy.spawn = 35; blockTypes.tnt.spawn = 1; break;
+        case 'hard': timeLeft = 45; blockSpawnRate = 500; blockTypes.enemy.spawn = 45; blockTypes.tnt.spawn = 2; break;
+        case 'insane': timeLeft = 60; blockSpawnRate = 300; blockTypes.enemy.spawn = 55; blockTypes.tnt.spawn = 2; break;
       }
       
       document.getElementById('gameTitle').textContent = `⛏️ ${mode.toUpperCase()} MODE ⛏️`;
-      
-      // Stop ambient track before launching the game fields
       stopMusicForGame();
       startGame();
     }
     
     function startGame() {
-      gameActive = true;
-      score = 0;
-      combo = 0;
-      comboPoints = 0;
-      maxCombo = 0;
-      lastClickedType = null;
-      
+      gameActive = true; score = 0; combo = 0; comboPoints = 0; maxCombo = 0; lastClickedType = null;
       document.getElementById('mainContainer').style.display = 'none';
       document.getElementById('gameContainer').classList.add('active');
-      
       document.getElementById('scoreDisplay').textContent = '0';
       document.getElementById('timerDisplay').textContent = timeLeft;
       
       createInitialBlocks();
       startTimer();
-      
-      spawnTimer = setInterval(() => {
-        if (gameActive) spawnRandomBlock();
-      }, blockSpawnRate);
+      spawnTimer = setInterval(() => { if (gameActive) spawnRandomBlock(); }, blockSpawnRate);
     }
     
     function endGame() {
       gameActive = false;
       clearInterval(gameTimer);
       clearInterval(spawnTimer);
-      
       document.getElementById('gameContainer').classList.remove('active');
-      document.getElementById('mainContainer').style.display = 'block';
-      
-      // Safety release: Resume Sweden progression loop on landing page
+      document.getElementById('mainContainer').style.display = 'flex';
       resumeMusicForMainScreen();
-      
       if (score > 0) celebrateFinalScore();
     }
     
@@ -1184,18 +1008,12 @@
     
     function spawnRandomBlock() {
       if (!gameActive) return;
-      
       const gameArea = document.getElementById('gameArea');
-      let blockType = 'stone';
-      const rand = Math.random() * 100;
-      let cumulative = 0;
+      let blockType = 'stone', rand = Math.random() * 100, cumulative = 0;
       
       for (let [type, data] of Object.entries(blockTypes)) {
         cumulative += data.spawn;
-        if (rand < cumulative) {
-          blockType = type;
-          break;
-        }
+        if (rand < cumulative) { blockType = type; break; }
       }
       
       const blockData = blockTypes[blockType];
@@ -1206,81 +1024,48 @@
       
       let x = Math.random() * (gameArea.offsetWidth - 70);
       let y = Math.random() * (gameArea.offsetHeight - 70);
+      block.style.left = x + 'px'; block.style.top = y + 'px';
       
-      block.style.left = x + 'px';
-      block.style.top = y + 'px';
-      
-      block.onclick = (e) => {
-        e.preventDefault();
-        handleBlockClick(block, blockType, blockData);
-      };
-      
+      block.onclick = (e) => { e.preventDefault(); handleBlockClick(block, blockType, blockData); };
       gameArea.appendChild(block);
-      
-      setTimeout(() => {
-        if (block.parentElement) {
-          block.remove();
-        }
-      }, 5000);
+      setTimeout(() => { if (block.parentElement) block.remove(); }, 5000);
     }
     
     function handleBlockClick(blockEl, blockType, blockData) {
       if (!gameActive) return;
       
       if (lastClickedType !== null && lastClickedType !== blockType) {
-        if (combo > 0) {
-          score += comboPoints;
-          document.getElementById('scoreDisplay').textContent = score;
-        }
-        combo = 0;
-        comboPoints = 0;
+        if (combo > 0) { score += comboPoints; document.getElementById('scoreDisplay').textContent = score; }
+        combo = 0; comboPoints = 0;
       }
       
       playMineSfx(blockType, combo);
 
       if (blockType === 'enemy') {
-        score = Math.max(0, score - 50);
-        combo = 0;
-        comboPoints = 0;
-        lastClickedType = null;
+        score = Math.max(0, score - 50); combo = 0; comboPoints = 0; lastClickedType = null;
         document.getElementById('scoreDisplay').textContent = score;
-        updateComboDisplay();
-        shakeScreen();
+        updateComboDisplay(); shakeScreen();
         createAchievementPopup('💚 HIT BY CREEPER!', '-50 points!');
-        blockEl.remove();
-        return;
+        blockEl.remove(); return;
       }
       
       if (blockType === 'tnt') {
-        if (combo > 0) {
-          score += comboPoints;
-        }
-        score += 200;
-        document.getElementById('scoreDisplay').textContent = score;
+        if (combo > 0) score += comboPoints;
+        score += 200; document.getElementById('scoreDisplay').textContent = score;
         createAchievementPopup('💣 BOOM!', '+200 points!');
-        clearNearbyBlocks(blockEl);
-        createPointsPopup(blockEl, 200);
-        combo = 0;
-        comboPoints = 0;
-        lastClickedType = null;
-        updateComboDisplay();
-        blockEl.remove();
-        return;
+        clearNearbyBlocks(blockEl); createPointsPopup(blockEl, 200);
+        combo = 0; comboPoints = 0; lastClickedType = null;
+        updateComboDisplay(); blockEl.remove(); return;
       }
       
       lastClickedType = blockType;
       combo++;
-      
       let points = blockData.points;
-      let multiplier = 1 + (combo - 1) * 0.15;
-      let awardedPoints = Math.floor(points * multiplier);
-      
+      let awardedPoints = Math.floor(points * (1 + (combo - 1) * 0.15));
       comboPoints += awardedPoints;
-      
       if (combo > maxCombo) maxCombo = combo;
       
-      updateComboDisplay();
-      createPointsPopup(blockEl, awardedPoints);
+      updateComboDisplay(); createPointsPopup(blockEl, awardedPoints);
       blockEl.remove();
     }
     
@@ -1288,24 +1073,16 @@
       const gameArea = document.getElementById('gameArea');
       const centerX = parseInt(centerBlock.style.left);
       const centerY = parseInt(centerBlock.style.top);
-      
       gameArea.querySelectorAll('.game-block').forEach(block => {
-        const x = parseInt(block.style.left);
-        const y = parseInt(block.style.top);
-        const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
-        
-        if (distance < 150 && block !== centerBlock) {
-          block.remove();
-        }
+        const distance = Math.sqrt((parseInt(block.style.left) - centerX) ** 2 + (parseInt(block.style.top) - centerY) ** 2);
+        if (distance < 150 && block !== centerBlock) block.remove();
       });
     }
     
     function createPointsPopup(blockEl, points) {
       const popup = document.createElement('div');
-      popup.className = 'points-popup';
-      popup.textContent = `+${points}`;
-      popup.style.left = blockEl.style.left;
-      popup.style.top = blockEl.style.top;
+      popup.className = 'points-popup'; popup.textContent = `+${points}`;
+      popup.style.left = blockEl.style.left; popup.style.top = blockEl.style.top;
       popup.style.color = points > 100 ? '#FF69B4' : points > 50 ? '#FF6B6B' : '#FFD700';
       document.getElementById('gameArea').appendChild(popup);
       setTimeout(() => popup.remove(), 1000);
@@ -1313,8 +1090,7 @@
     
     function createAchievementPopup(title, text) {
       const popup = document.createElement('div');
-      popup.className = 'achievement-popup';
-      popup.innerHTML = `<h3>${title}</h3><p>${text}</p>`;
+      popup.className = 'achievement-popup'; popup.innerHTML = `<h3>${title}</h3><p>${text}</p>`;
       document.body.appendChild(popup);
       setTimeout(() => popup.remove(), 2000);
     }
@@ -1322,11 +1098,8 @@
     function updateComboDisplay() {
       const comboBox = document.getElementById('comboBox');
       if (combo > 1) {
-        comboBox.style.display = 'block';
-        document.getElementById('comboDisplay').textContent = combo;
-      } else {
-        comboBox.style.display = 'none';
-      }
+        comboBox.style.display = 'block'; document.getElementById('comboDisplay').textContent = combo;
+      } else { comboBox.style.display = 'none'; }
     }
     
     function shakeScreen() {
@@ -1339,35 +1112,21 @@
       gameTimer = setInterval(() => {
         timeLeft--;
         document.getElementById('timerDisplay').textContent = timeLeft;
-        
         if (timeLeft % 10 === 0 && timeLeft > 0) {
-          blockSpawnRate *= 0.85;
-          clearInterval(spawnTimer);
-          spawnTimer = setInterval(() => {
-            if (gameActive) spawnRandomBlock();
-          }, blockSpawnRate);
+          blockSpawnRate *= 0.85; clearInterval(spawnTimer);
+          spawnTimer = setInterval(() => { if (gameActive) spawnRandomBlock(); }, blockSpawnRate);
         }
-        
         if (timeLeft <= 0) {
           gameActive = false;
-          
-          if (combo > 0) {
-            score += comboPoints;
-          }
-          
-          clearInterval(gameTimer);
-          clearInterval(spawnTimer);
-          
+          if (combo > 0) score += comboPoints;
+          clearInterval(gameTimer); clearInterval(spawnTimer);
           playGameOverSfx();
-
-          const gameArea = document.getElementById('gameArea');
-          gameArea.innerHTML = `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #FFD700; text-shadow: 2px 2px 0 #000; font-size: 32px; width: 90%;">
+          document.getElementById('gameArea').innerHTML = `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #FFD700; text-shadow: 2px 2px 0 #000; font-size: 32px; width: 90%;">
             <div style="margin-bottom: 20px; font-size: 40px;">🎮 GAME OVER! 🎮</div>
             <div style="font-size: 24px; margin: 15px 0;">Final Score:</div>
             <div style="font-size: 56px; color: #FF6B6B; margin-bottom: 15px;">${score}</div>
             <div style="font-size: 20px; color: #00FF00;">Best Combo: ${maxCombo}x</div>
           </div>`;
-          
           document.getElementById('scoreDisplay').textContent = score;
         }
       }, 1000);
@@ -1378,28 +1137,19 @@
       for (let i = 0; i < 30; i++) {
         setTimeout(() => {
           const emoji = document.createElement('div');
-          emoji.style.position = 'fixed';
-          emoji.style.left = Math.random() * 100 + '%';
-          emoji.style.top = '-50px';
+          emoji.style.position = 'fixed'; emoji.style.left = Math.random() * 100 + '%'; emoji.style.top = '-50px';
           emoji.textContent = confetti[Math.floor(Math.random() * confetti.length)];
-          emoji.style.fontSize = '30px';
-          emoji.style.animation = 'floatUp 2.5s ease-out forwards';
-          emoji.style.pointerEvents = 'none';
-          emoji.style.zIndex = '2000';
+          emoji.style.fontSize = '30px'; emoji.style.animation = 'floatUp 2.5s ease-out forwards';
+          emoji.style.pointerEvents = 'none'; emoji.style.zIndex = '5000';
           document.body.appendChild(emoji);
           setTimeout(() => emoji.remove(), 2500);
         }, i * 50);
       }
     }
     
-    // Initialize loops and window contexts
     createAmbientParticles();
     setInterval(spawnRandomCharacter, 5000);
-    
-    // Auto initialization sequence on DOM completion
-    window.addEventListener('DOMContentLoaded', () => {
-      startMusicOnLoad();
-    });
+    window.addEventListener('DOMContentLoaded', () => { startMusicOnLoad(); });
   </script>
 </body>
 </html>
